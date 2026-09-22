@@ -8,15 +8,16 @@ struct adaptador{
 	const char *dns;
 };
 int no_interactivo(struct adaptador *red){
-	FILE *f = fopen("00-installer-config.yaml","w");
-	if(f==NULL){return 1;}
-	fprintf(f,"network:\n  version: 2\n  ethernets:\n");
-	fprintf(f,"   %s:\n",red->nombre);
-	fprintf(f,"    dhcp4: %s\n",red->dhcp);
-	fprintf(f,"    addresses:\n    - %s\n",red->address);
-	fprintf(f,"    gateway4: %s\n",red->gateway);
-	fprintf(f,"    nameservers:\n     addresses: [%s]",red->dns);
-	fclose(f);
+FILE *f = fopen("00-installer-config.yaml","w");
+        if(f==NULL){return 1;}
+        fprintf(f,"network:\n  version: 2\n  ethernets:\n");
+        fprintf(f,"    %s:\n",red->nombre);
+        fprintf(f,"     dhcp4: %s\n",red->dhcp);
+        fprintf(f,"     addresses:\n     - %s\n",red->address);
+        fprintf(f,"     gateway4: %s\n",red->gateway);
+        fprintf(f,"     nameservers:\n      addresses: [%s]\n",red->dns);
+        fclose(f);
+        return 0;
 }
 int main (int args,char *argv[]){
 	struct adaptador red;
