@@ -1,5 +1,6 @@
 #include <stdio.h>
-
+#include <sys/stat.h>
+#include <sys/types.h>
 struct adaptador{
 	const char *nombre;
 	const char *dhcp;
@@ -8,15 +9,22 @@ struct adaptador{
 	const char *dns;
 };
 int no_interactivo(struct adaptador *red){
-FILE *f = fopen("00-installer-config.yaml","w");
+const char ruta[] ="00-installer-config.yaml";
+FILE *f = fopen(ruta,"w");
         if(f==NULL){return 1;}
-        fprintf(f,"network:\n  version: 2\n  ethernets:\n");
+        fprintf(f,"network:\n  version: 2\n  renderer: NetworkManager\n  ethernets:\n");
         fprintf(f,"    %s:\n",red->nombre);
-        fprintf(f,"     dhcp4: %s\n",red->dhcp);
-        fprintf(f,"     addresses:\n     - %s\n",red->address);
-        fprintf(f,"     gateway4: %s\n",red->gateway);
-        fprintf(f,"     nameservers:\n      addresses: [%s]\n",red->dns);
-        fclose(f);
+        fprintf(f,"      dhcp4: %s\n",red->dhcp);
+        fprintf(f,"      addresses:\n        - %s\n",red->address);
+	fprintf(f,"      routes:\n");
+	fprintf(f,"        - to: default\n");
+	fprintf(f,"          via: %s\n",red->gateway);
+	fprintf(f,"      nameservers:\n");
+	fprintf(f,"        addresses:\n");
+	fprintf(f,"          - %s\n",red->dns);
+	fprintf(f,"          - 8.8.8.8\n");
+	fclose(f);
+	chmod(ruta,0600);
         return 0;
 }
 int main (int args,char *argv[]){
